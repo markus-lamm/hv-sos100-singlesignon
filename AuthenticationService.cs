@@ -55,9 +55,16 @@ public class AuthenticationService
     public void ReadSessionVariables(Controller controller, HttpContext httpContext)
     {
         var isAuthenticated = httpContext.Session.GetString("IsAuthenticated");
-        controller.ViewData["IsAuthenticated"] = isAuthenticated;
+        if (isAuthenticated != null)
+        {
+            controller.ViewData["IsAuthenticated"] = isAuthenticated;
+        }
+
         var userId = httpContext.Session.GetString("UserId");
-        controller.ViewData["UserId"] = userId;
+        if (userId != null)
+        {
+            controller.ViewData["UserId"] = userId;
+        }
     }
 
     private static void CreateCookie(User user, ControllerBase controllerBase)
