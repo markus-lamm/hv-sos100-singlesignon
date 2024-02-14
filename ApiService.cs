@@ -5,7 +5,7 @@ namespace Hv.Sos100.SingleSignOn;
 
 internal class ApiService
 {
-    private const string BaseUrl = "http://localhost:5043"; //TODO modify when SSO api is deployed
+    private const string BaseUrl = "https://informatik6.ei.hv.se/singlesignon";
     private readonly HttpClient _httpClient = new();
 
     internal async Task<User?> ValidateNewAuthentication(User user)
