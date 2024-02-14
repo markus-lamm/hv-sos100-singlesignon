@@ -1,10 +1,10 @@
 ﻿namespace Hv.Sos100.SingleSignOn;
 
-internal class User
+public class User
 {
-    internal int Id { get; set; }
-    internal string? Username { get; set; }
-    internal string? Password { get; set; }
-    internal string? Token { get; set; }
-    internal DateTime? LastActivity { get; set; }
+    public int Id { get; set; }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
+    public string? Token { get; set; }
+    public DateTime? LastActivity { get; set; }
 }
