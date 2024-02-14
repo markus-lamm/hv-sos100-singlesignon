@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <Title>Hv.Sos100.SingleSignOn</Title>
     <Version>1.0.0</Version>
-    <Authors>markus-lamm,</Authors>
+    <Authors>markus-lamm</Authors>
     <PackageIcon>SingleSignOn.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/markus-lamm/hv-sos100-singlesignon</PackageProjectUrl>
