@@ -13,7 +13,7 @@ public class AuthenticationService
     public async Task<bool> CreateSession(string email, string password, ControllerBase controllerBase, HttpContext httpContext)
     {
         var account = new Account { Email = email, Password = password };
-        var authentication = await _apiService.ValidateNewAuthentication(account);
+        var authentication = await _apiService.ValidateNewSession(account);
         if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");
@@ -34,7 +34,7 @@ public class AuthenticationService
         var token = controllerBase.Request.Cookies["hv-sos100-token"];
         if (token == null) { return false; }
 
-        var authentication = await _apiService.ValidateExistingAuthentication(token);
+        var authentication = await _apiService.ValidateExistingSession(token);
         if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");

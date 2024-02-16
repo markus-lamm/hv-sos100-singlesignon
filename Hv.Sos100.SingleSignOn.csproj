@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Title>Hv.Sos100.SingleSignOn</Title>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Authors>markus-lamm</Authors>
     <PackageIcon>SingleSignOn.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>

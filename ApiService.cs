@@ -8,7 +8,7 @@ internal class ApiService
     private const string BaseUrl = "https://informatik6.ei.hv.se/singlesignon";
     private readonly HttpClient _httpClient = new();
 
-    internal async Task<Authentication?> ValidateNewAuthentication(Account account)
+    internal async Task<Authentication?> ValidateNewSession(Account account)
     {
         var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/api/Authentications/validateNewSession", account);
 
@@ -20,7 +20,7 @@ internal class ApiService
         return null;
     }
 
-    internal async Task<Authentication?> ValidateExistingAuthentication(string token)
+    internal async Task<Authentication?> ValidateExistingSession(string token)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"{BaseUrl}/api/Authentications/validateExistingSession");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
