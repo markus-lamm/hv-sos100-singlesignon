@@ -8,33 +8,38 @@ public class AuthenticationService
     private readonly ApiService _apiService = new();
 
     /// <summary>
-    /// Attempt to create a new session and cookie for the user, return true if successful, false if not
+    /// Attempt to create a new session and cookie for the account, return true if successful, false if not
     /// </summary>
-    public async Task<bool> CreateSession(string username, string password, ControllerBase controllerBase, HttpContext httpContext)
+    public async Task<bool> CreateSession(string email, string password, ControllerBase controllerBase, HttpContext httpContext)
     {
-        var inputUser = new User { Username = username, Password = password };
-        var validatedUser = await _apiService.ValidateNewAuthentication(inputUser);
-        if (validatedUser == null) { return false; }
+        var account = new Account { Email = email, Password = password };
+        var authentication = await _apiService.ValidateNewAuthentication(account);
+        if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");
-        httpContext.Session.SetString("UserId", validatedUser.Id.ToString());
-        CreateCookie(validatedUser, controllerBase);
+        httpContext.Session.SetString("AccountId", authentication.AccountId!);
+        httpContext.Session.SetString("AccountType", authentication.AccountType!);
+        CreateCookie(authentication, controllerBase);
         return true;
     }
 
     /// <summary>
-    /// Attempt to resume an existing signed in session, return true if successful, false if not
+    /// Attempt to resume an existing signed in session, return true if successful or already authenticated, false if not
     /// </summary>
     public async Task<bool> ResumeSession(ControllerBase controllerBase, HttpContext httpContext)
     {
-        var token = controllerBase.Request.Cookies["authenticationToken"];
+        var alreadyAuthenticated = httpContext.Session.GetString("IsAuthenticated");
+        if (alreadyAuthenticated != null) { return true; }
+        
+        var token = controllerBase.Request.Cookies["hv-sos100-token"];
         if (token == null) { return false; }
 
-        var user = await _apiService.ValidateExistingAuthentication(token);
-        if (user == null) { return false; }
+        var authentication = await _apiService.ValidateExistingAuthentication(token);
+        if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");
-        httpContext.Session.SetString("UserId", user.Id.ToString());
+        httpContext.Session.SetString("AccountId", authentication.AccountId!);
+        httpContext.Session.SetString("AccountType", authentication.AccountType!);
         return true;
     }
 
@@ -44,13 +49,13 @@ public class AuthenticationService
     /// </summary>
     public void EndSession(ControllerBase controllerBase, HttpContext httpContext)
     {
-        controllerBase.Response.Cookies.Delete("authenticationToken");
+        controllerBase.Response.Cookies.Delete("hv-sos100-token");
         httpContext.Session.Clear();
     }
 
     /// <summary>
     /// Read the session variables and set them in the ViewData dictionary,
-    /// sets IsAuthenticated as true and UserId as the user's id if the user is authenticated
+    /// sets IsAuthenticated as true, AccountId and AccountType to the values provided by the api server
     /// </summary>
     public void ReadSessionVariables(Controller controller, HttpContext httpContext)
     {
@@ -60,14 +65,20 @@ public class AuthenticationService
             controller.ViewData["IsAuthenticated"] = isAuthenticated;
         }
 
-        var userId = httpContext.Session.GetString("UserId");
-        if (userId != null)
+        var accountId = httpContext.Session.GetString("AccountId");
+        if (accountId != null)
         {
-            controller.ViewData["UserId"] = userId;
+            controller.ViewData["AccountId"] = accountId;
+        }
+
+        var accountType = httpContext.Session.GetString("AccountType");
+        if (accountType != null)
+        {
+            controller.ViewData["AccountType"] = accountType;
         }
     }
 
-    private static void CreateCookie(User user, ControllerBase controllerBase)
+    private static void CreateCookie(Authentication authentication, ControllerBase controllerBase)
     {
         var isHttps = controllerBase.Request.IsHttps;
         string domain;
@@ -82,7 +93,7 @@ public class AuthenticationService
             domain = ".ei.hv.se";
         }
 
-        controllerBase.Response.Cookies.Append("authenticationToken", user.Token!, new CookieOptions
+        controllerBase.Response.Cookies.Append("hv-sos100-token", authentication.Token!, new CookieOptions
         {
             Secure = isHttps,
             HttpOnly = true,
