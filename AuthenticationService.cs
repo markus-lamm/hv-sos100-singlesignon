@@ -49,7 +49,16 @@ public class AuthenticationService
     /// </summary>
     public void EndSession(ControllerBase controllerBase, HttpContext httpContext)
     {
-        controllerBase.Response.Cookies.Delete("hv-sos100-token");
+        var isHttps = controllerBase.Request.IsHttps;
+
+        var domain = controllerBase.Request.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ? "" : ".ei.hv.se";
+
+        controllerBase.Response.Cookies.Delete("hv-sos100-token", new CookieOptions
+        {
+            Secure = isHttps,
+            HttpOnly = true,
+            Domain = domain
+        });
         httpContext.Session.Clear();
     }
 
@@ -81,17 +90,8 @@ public class AuthenticationService
     private static void CreateCookie(Authentication authentication, ControllerBase controllerBase)
     {
         var isHttps = controllerBase.Request.IsHttps;
-        string domain;
 
-        if (controllerBase.Request.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-        {
-            domain = "";
-            isHttps = false;
-        }
-        else
-        {
-            domain = ".ei.hv.se";
-        }
+        var domain = controllerBase.Request.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ? "" : ".ei.hv.se";
 
         controllerBase.Response.Cookies.Append("hv-sos100-token", authentication.Token!, new CookieOptions
         {
