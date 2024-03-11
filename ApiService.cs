@@ -8,9 +8,9 @@ internal class ApiService
     private const string BaseUrl = "https://informatik6.ei.hv.se/singlesignon";
     private readonly HttpClient _httpClient = new();
 
-    internal async Task<Authentication?> ValidateNewSession(Account account)
+    internal async Task<Authentication?> ValidateNewSession(User user)
     {
-        var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/api/Authentications/validateNewSession", account);
+        var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/api/Authentications/validateNewSession", user);
 
         if (response.IsSuccessStatusCode)
         {

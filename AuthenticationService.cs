@@ -12,13 +12,13 @@ public class AuthenticationService
     /// </summary>
     public async Task<bool> CreateSession(string email, string password, ControllerBase controllerBase, HttpContext httpContext)
     {
-        var account = new Account { Email = email, Password = password };
-        var authentication = await _apiService.ValidateNewSession(account);
+        var user = new User { Email = email, Password = password };
+        var authentication = await _apiService.ValidateNewSession(user);
         if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");
-        httpContext.Session.SetString("AccountId", authentication.AccountId!);
-        httpContext.Session.SetString("AccountType", authentication.AccountType!);
+        httpContext.Session.SetString("UserID", authentication.UserID!);
+        httpContext.Session.SetString("UserRole", authentication.UserRole!);
         CreateCookie(authentication, controllerBase);
         return true;
     }
@@ -38,8 +38,8 @@ public class AuthenticationService
         if (authentication == null) { return false; }
 
         httpContext.Session.SetString("IsAuthenticated", "true");
-        httpContext.Session.SetString("AccountId", authentication.AccountId!);
-        httpContext.Session.SetString("AccountType", authentication.AccountType!);
+        httpContext.Session.SetString("UserID", authentication.UserID!);
+        httpContext.Session.SetString("UserRole", authentication.UserRole!);
         return true;
     }
 
@@ -74,16 +74,16 @@ public class AuthenticationService
             controller.ViewData["IsAuthenticated"] = isAuthenticated;
         }
 
-        var accountId = httpContext.Session.GetString("AccountId");
-        if (accountId != null)
+        var userId = httpContext.Session.GetString("UserID");
+        if (userId != null)
         {
-            controller.ViewData["AccountId"] = accountId;
+            controller.ViewData["UserID"] = userId;
         }
 
-        var accountType = httpContext.Session.GetString("AccountType");
-        if (accountType != null)
+        var userRole = httpContext.Session.GetString("UserRole");
+        if (userRole != null)
         {
-            controller.ViewData["AccountType"] = accountType;
+            controller.ViewData["UserRole"] = userRole;
         }
     }
 
