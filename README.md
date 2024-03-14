@@ -96,9 +96,9 @@ If you want to access the data in the controller you can store the session varia
 
 ```csharp
 // The user data can be accessed directly from your C# code by reading it from the session variables, this can only be done in the controller
-var isAuthenticated = httpContext.Session.GetString("IsAuthenticated");
-var userId = httpContext.Session.GetString("UserID");
-var userRole = httpContext.Session.GetString("UserRole");
+var isAuthenticated = HttpContext.Session.GetString("IsAuthenticated");
+var userId = HttpContext.Session.GetString("UserID");
+var userRole = HttpContext.Session.GetString("UserRole");
 ```
 
 If you want to use the session variables in your HTML code you will have to use the ViewData directory. Fortunately there is a built in method in the NuGet package to automatically load the data to the ViewData directory. Using the `ReadSessionVariables` method all session variables will be loaded into the ViewData directory.
