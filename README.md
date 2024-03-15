@@ -67,7 +67,7 @@ public async Task<IActionResult> Index()
 
     // Use the authenticationService object to call the ResumeSession method and optionally store the result in a variable
     // The ResumeSession method does not need to be supplied with any user information as it checks the browser cookies for a valid token
-    var existingSession = await _authenticationService.ResumeSession(controllerBase:this, HttpContext);
+    var existingSession = await authenticationService.ResumeSession(controllerBase:this, HttpContext);
 
     return View();
 }
